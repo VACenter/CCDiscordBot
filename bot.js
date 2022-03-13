@@ -44,7 +44,7 @@ client.on("messageCreate", async (msg)=>{
                     msg.channel.send("Role Register```" + JSON.stringify(currentRoleRegister, null, 2) + "```");
                     refreshRoles();
                 }else{
-                    msg.reply("Not authorised to use this command")
+                    msg.reply("**Command Failed:** User not authorised to use command.")
                 }   
                 break;
             case "pair":
@@ -58,18 +58,18 @@ client.on("messageCreate", async (msg)=>{
                                 const currentPilotRegister = JSON.parse(fs.readFileSync(`${__dirname}/users.json`));
                                 currentPilotRegister[targetDiscord.id] = targetPilot.username;
                                 fs.writeFileSync(`${__dirname}/users.json`, JSON.stringify(currentPilotRegister));
-                                msg.reply("Pilot Linked!");
+                                msg.reply("**Command Succeeded:** Pilot was linked successfully.");
                             } else {
-                                msg.reply("Argument 2 must be a VACenter pilot callsign!");
+                                msg.reply("**Command Failed:** Argument 2 must be a valid crew center callsign.");
                             }
                         } catch (err) {
                             msg.reply(`Error occured ${err}`);
                         }
                     } else {
-                        msg.reply("Argument 1 must be a discord user!");
+                        msg.reply("**Command Failed:** Argument 1 must be a valid discord user.");
                     }
                 }else {
-                    msg.reply("Not authorised to use this command")
+                    msg.reply("**Command Failed:** User not authorised to use command.")
                 }  
                 break;
         }
