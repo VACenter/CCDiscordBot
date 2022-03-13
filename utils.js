@@ -1,5 +1,6 @@
 const request = require('request');
 require("dotenv").config();
+const fs = require('fs');
 
 function getCCUser(user){
     return new Promise(function(resolve, reject){
@@ -30,7 +31,44 @@ function camelize(str) {
     }).replace(/\s+/g, '');
 }
 
+function retrieveUserReg(){
+    return JSON.parse(fs.readFileSync(`${__dirname}/users.json`));
+}
+
+function writeUserReg(data){
+    return fs.writeFileSync(`${__dirname}/users.json`, JSON.stringify(data));
+}
+
+function retrieveRankReg() {
+    return JSON.parse(fs.readFileSync(`${__dirname}/roles.json`));
+}
+
+function writeRankReg(data) {
+    return fs.writeFileSync(`${__dirname}/roles.json`, JSON.stringify(data));
+}
+
+function retrieveHistoryReg() {
+    return JSON.parse(fs.readFileSync(`${__dirname}/history.json`));
+}
+
+function writeHistoryReg(data) {
+    return fs.writeFileSync(`${__dirname}/history.json`, JSON.stringify(data));
+}
 
 module.exports = {
-    getCCUser, camelize
+    getCCUser, camelize,
+    registry:{
+        read: {
+            users: retrieveUserReg,
+            ranks: retrieveRankReg,
+            history: retrieveHistoryReg
+        },
+        write: { 
+            users: writeUserReg,
+            ranks: writeRankReg,
+            history: writeHistoryReg
+        }
+    }
 }
+
+
