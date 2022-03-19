@@ -118,12 +118,3 @@ function refreshRoles(){
 }
 
 setInterval(refreshRoles, 1000 * 60 * 5);
-
-/*
-Object.keys(rolesRegister).forEach(async function(rk){
-                    const roleID = rolesRegister[rk];
-                    member.roles.remove(roleID);
-                });
-                console.log("Adding rank roles for " + pilot.display);
-                member.roles.add(rolesRegister[utils.camelize(pilot.rank)])
-                */
