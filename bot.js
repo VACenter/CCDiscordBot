@@ -1,5 +1,6 @@
 //@ts-check
 const { Client, Intents } = require('discord.js');
+const { mode } = require('./utils.js');
 const botIntents = new Intents();
 const utils = require("./utils.js");
 require("dotenv").config();
@@ -49,6 +50,64 @@ client.on("messageCreate", async (msg)=>{
                 }else{
                     msg.reply("**Command Failed:** User not authorised to use command.")
                 }   
+                break;
+            case "myStats":
+                if (parseInt(process.env.STATS_ACCESS) == 1){
+                    const authorDiscord = msg.author.id.toString();
+                    const currentPilotRegister = utils.registry.read.users();
+                    if(currentPilotRegister[authorDiscord] || currentPilotRegister[authorDiscord] === 0){
+                        const authorCC = await utils.getCCUser(currentPilotRegister[authorDiscord]);
+                        //Calculate Common
+                        let vics = [];
+                        let routes = [];
+                        authorCC.pireps.forEach(pirep => {
+                            vics.push(pirep.vehiclePublic)
+                            routes.push(pirep.route);
+                        });
+                        msg.reply({ content: `**${authorCC.display}'s Stats**`, embeds: [utils.createEmbed(process.env.BOT_COLOR, `${authorCC.display}'s Stats`, null, client.user.username, "", null, [['Flight Hours', `${parseFloat(authorCC.hours).toFixed(2)}hrs`], ['# of PIREPS', `${authorCC.pireps.length}`], ['Most Used Aircraft', mode(vics) ? mode(vics) : "None"], ['Most Flown Route', mode(routes) ? mode(routes) : "None"], ['Rank', authorCC.rank]], null, null)]})
+                    }else{
+                        msg.reply("**Command Failed:** User not paired. Contact a staff member to become paired!")
+                    }
+                }else {
+                    msg.reply("**Command Failed:** You are unable to execute this command since the 'stats' module has not be purchased for this VA.")
+                }
+                break;
+            case "top":
+                if (parseInt(process.env.STATS_ACCESS) == 1){
+                    const hoursTop = new Map();
+                    const pilotRegister = utils.registry.read.users();
+                    const pirepsTop = new Map();
+                    let pilotTicker = 0;
+                    let pilotTotal = 0;
+
+                    for (let properties in pilotRegister) {
+                        pilotTotal = pilotTotal + 1
+                    }
+
+
+                    Object.entries(pilotRegister).forEach(async ([key, value]) => {
+                        const CCUser = await utils.getCCUser(value);
+                        hoursTop.set(value, CCUser.hours);
+                        pirepsTop.set(value, CCUser.pireps.length);
+                        pilotTicker++;
+                    });
+                    let checker = setInterval(() => {
+                        if (pilotTicker == pilotTotal) {
+                            clearInterval(checker);
+                            const hoursSort = new Map([...hoursTop.entries()].sort((a, b) => b[1] - a[1]));
+                            const pirepsSort = new Map([...pirepsTop.entries()].sort((a, b) => b[1] - a[1]));
+
+                            const mostHours = hoursSort.entries().next().value[0];
+                            const mostPIREPS = pirepsSort.entries().next().value[0];
+
+                            msg.reply({ content: "**Top VA Stats**", embeds: [utils.createEmbed(process.env.BOT_COLOR, `Top VA Stats`, null, client.user.username, "", null, [['Most Hours', `${process.env.VA_CODE}${mostHours}`], ['Most PIREPS', `${process.env.VA_CODE}${mostPIREPS}`]], null, null)] })
+                        }
+                    }, 25);
+                }else{
+                    msg.reply("**Command Failed:** You are unable to execute this command since the 'stats' module has not be purchased for this VA.")
+                }
+                    
+
                 break;
             case "pair":
                 guildTarget = guild.members.resolve(msg.author);
