@@ -53,20 +53,24 @@ client.on("messageCreate", async (msg)=>{
                 break;
             case "theirStats":
                 if (parseInt(process.env.STATS_ACCESS) == 1) {
-                    const targetDiscord = getUserFromMention(args[0]);
-                    const currentPilotRegister = utils.registry.read.users();
-                    if (currentPilotRegister[targetDiscord.id] || currentPilotRegister[targetDiscord.id] === 0) {
-                        const authorCC = await utils.getCCUser(currentPilotRegister[targetDiscord.id]);
-                        //Calculate Common
-                        let vics = [];
-                        let routes = [];
-                        authorCC.pireps.forEach(pirep => {
-                            vics.push(pirep.vehiclePublic)
-                            routes.push(pirep.route);
-                        });
-                        msg.reply({ content: `**${authorCC.display}'s Stats**`, embeds: [utils.createEmbed(process.env.BOT_COLOR, `${authorCC.display}'s Stats`, null, client.user.username, "", null, [['Flight Hours', `${parseFloat(authorCC.hours).toFixed(2)}hrs`], ['# of PIREPS', `${authorCC.pireps.length}`], ['Most Used Aircraft', mode(vics) ? mode(vics) : "None"], ['Most Flown Route', mode(routes) ? mode(routes) : "None"], ['Rank', authorCC.rank]], null, null)] })
-                    } else {
-                        msg.reply("**Command Failed:** User not paired. Contact a staff member to pair them!")
+                    if(getUserFromMention(args[0])){
+                        const targetDiscord = getUserFromMention(args[0]);
+                        const currentPilotRegister = utils.registry.read.users();
+                        if (currentPilotRegister[targetDiscord.id] || currentPilotRegister[targetDiscord.id] === 0) {
+                            const authorCC = await utils.getCCUser(currentPilotRegister[targetDiscord.id]);
+                            //Calculate Common
+                            let vics = [];
+                            let routes = [];
+                            authorCC.pireps.forEach(pirep => {
+                                vics.push(pirep.vehiclePublic)
+                                routes.push(pirep.route);
+                            });
+                            msg.reply({ content: `**${authorCC.display}'s Stats**`, embeds: [utils.createEmbed(process.env.BOT_COLOR, `${authorCC.display}'s Stats`, null, client.user.username, "", null, [['Flight Hours', `${parseFloat(authorCC.hours).toFixed(2)}hrs`], ['# of PIREPS', `${authorCC.pireps.length}`], ['Most Used Aircraft', mode(vics) ? mode(vics) : "None"], ['Most Flown Route', mode(routes) ? mode(routes) : "None"], ['Rank', authorCC.rank]], null, null)] })
+                        } else {
+                            msg.reply("**Command Failed:** User not paired. Contact a staff member to pair them!")
+                        }
+                    }else{
+                        msg.reply("**Command Failed:** Argument 1 must be a Discord user");
                     }
                 } else {
                     msg.reply("**Command Failed:** You are unable to execute this command since the 'stats' module has not be purchased for this VA.")
