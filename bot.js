@@ -97,10 +97,10 @@ client.on("messageCreate", async (msg)=>{
                             const hoursSort = new Map([...hoursTop.entries()].sort((a, b) => b[1] - a[1]));
                             const pirepsSort = new Map([...pirepsTop.entries()].sort((a, b) => b[1] - a[1]));
 
-                            const mostHours = hoursSort.entries().next().value[0];
-                            const mostPIREPS = pirepsSort.entries().next().value[0];
+                            const mostHours = hoursSort.entries().next().value;
+                            const mostPIREPS = pirepsSort.entries().next().value;
 
-                            msg.reply({ content: "**Top VA Stats**", embeds: [utils.createEmbed(process.env.BOT_COLOR, `Top VA Stats`, null, client.user.username, "", null, [['Most Hours', `${process.env.VA_CODE}${mostHours}`], ['Most PIREPS', `${process.env.VA_CODE}${mostPIREPS}`]], null, null)] })
+                            msg.reply({ content: "**Top VA Stats**", embeds: [utils.createEmbed(process.env.BOT_COLOR, `Top VA Stats`, null, client.user.username, "", null, [['Most Hours', `${process.env.VA_CODE}${mostHours[0]} - ${mostHours[1].toFixed(2)}hrs`], ['Most PIREPS', `${process.env.VA_CODE}${mostPIREPS[0]} - ${mostPIREPS[1]}`]], null, null)] })
                         }
                     }, 25);
                 }else{
